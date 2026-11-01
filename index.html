@@ -1,0 +1,110 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#142b4d"><title>理科 期末対策 | 運動とエネルギー</title><style>
+:root{font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;color:#192b42;background:#f2f6fa}*{box-sizing:border-box}body{margin:0}header{background:#142b4d;color:white;padding:22px 16px}header h1{margin:0;font-size:1.35rem}header p{margin:5px 0 0;color:#c6d6e7;font-size:.83rem}main{max-width:680px;margin:auto;padding:16px}.panel{background:white;border-radius:16px;padding:18px;margin:0 0 14px;box-shadow:0 2px 12px #182f5010}h2{font-size:1.15rem;margin:0 0 12px}.muted{color:#60738b;font-size:.85rem}.tabs,.actions{display:flex;gap:8px;flex-wrap:wrap}button,select{font:inherit}button{border:1px solid #cbd7e3;border-radius:11px;background:white;padding:11px 14px;cursor:pointer;color:#19324f}button.primary{background:#1764b3;color:white;border-color:#1764b3}button:disabled{opacity:.5}select{width:100%;padding:12px;border:1px solid #cbd7e3;border-radius:10px;background:white;margin:6px 0 14px}.choice{width:100%;display:block;text-align:left;margin:9px 0;padding:15px;border-radius:12px}.choice.correct{border-color:#1b9067;background:#e6f8ee}.choice.wrong{border-color:#d05b57;background:#fff0ee}.tag{display:inline-block;background:#e8f1fb;border-radius:100px;padding:5px 10px;color:#205c98;font-size:.77rem}.progress{height:8px;background:#e4eaf1;border-radius:9px;overflow:hidden;margin:12px 0}.progress div{height:100%;background:#277bc8}.answer{background:#f1f7fd;padding:14px;border-radius:12px;margin-top:12px;line-height:1.65}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:#f2f6fa;padding:12px;border-radius:10px;text-align:center}.stat strong{display:block;font-size:1.35rem}#question{font-size:1.12rem;line-height:1.65;margin:16px 0}footer{font-size:.76rem;color:#66788c;text-align:center;padding:20px}input[type=file]{max-width:100%}@media(max-width:400px){.panel{padding:14px}.stat{padding:8px}}
+</style></head><body><header><div style="max-width:680px;margin:auto"><h1>理科・2学期期末テスト対策</h1><p>中学3年｜運動とエネルギー｜教科書 P.140–187・ワーク P.58②–87</p></div></header><main>
+<section class="panel"><h2>学習メニュー</h2><label for="unit">出題範囲</label><select id="unit"></select><div class="actions"><button class="primary" id="start">分野別・全問</button><button id="random">ランダム10問</button><button id="wrong">間違えた問題</button></div><p class="muted" id="count"></p></section>
+<section class="panel" id="quiz" hidden><div class="actions" style="justify-content:space-between;align-items:center"><span class="tag" id="category"></span><span class="muted" id="position"></span></div><div class="progress"><div id="bar"></div></div><div id="question"></div><div id="choices"></div><div id="feedback" class="answer" hidden></div><div class="actions" style="margin-top:15px"><button class="primary" id="next" hidden>次の問題へ →</button><button id="stop">終了</button></div></section>
+<section class="panel" id="result" hidden><h2>今回の結果</h2><p id="summary"></p><button class="primary" id="again">もう一度学習する</button></section>
+<section class="panel"><h2>学習記録</h2><div class="stats"><div class="stat"><strong id="attempts">0</strong><span class="muted">解答回数</span></div><div class="stat"><strong id="accuracy">—</strong><span class="muted">正答率</span></div><div class="stat"><strong id="mistakes">0</strong><span class="muted">要復習</span></div></div><div id="byunit" class="muted" style="line-height:1.9;margin-top:14px"></div><div class="actions" style="margin-top:12px"><button id="export">履歴を保存</button><button id="import">履歴を読み込む</button><button id="reset">履歴を消去</button><input type="file" id="file" accept=".json,application/json" hidden></div><p class="muted">履歴はこの端末・ブラウザに保存されます。端末変更前に「履歴を保存」でバックアップしてください。</p></section>
+<section class="panel"><h2>使い方と注意</h2><p class="muted">1問ずつ4択で回答。間違えた問題は復習モードに残り、正解すると復習対象から外れます。計算問題は暗算か紙で解いてください。学校配布プリントの独自問題・作図・実験考察はワークでも確認してください。</p></section></main><footer>学習用オリジナル問題集｜履歴はGitHubに送信されません</footer><script>
+const rows=[
+["運動","平均の速さの求め方は？","移動距離÷かかった時間","移動距離×時間","時間÷移動距離","速さ×時間","平均の速さ＝移動距離÷時間。"],
+["運動","60mを12秒で進む物体の平均の速さは？","5m/s","6m/s","12m/s","720m/s","60÷12＝5m/s。"],
+["運動","72km/hは何m/s？","20m/s","72m/s","2m/s","200m/s","72÷3.6＝20m/s。"],
+["運動","5m/sで8秒進んだ距離は？","40m","13m","1.6m","80m","距離＝速さ×時間。"],
+["運動","速さが一定で一直線に進む運動は？","等速直線運動","自由落下","等加速度円運動","振動","速さと向きが変化しない運動。"],
+["運動","等速直線運動の時間と距離のグラフは？","原点を通る直線","水平線のみ","必ず曲線","右下がりの直線","距離は時間に比例する。"],
+["運動","等速直線運動の時間と速さのグラフは？","水平な直線","原点を通る右上がり","右下がりの曲線","放物線","速さが一定だから水平。"],
+["運動","記録タイマーの打点間隔が広がると何がわかる？","速さが増している","速さが減っている","質量が増えている","力が消えている","等時間ごとの移動距離が増える。"],
+["運動","記録タイマーが1秒間に50打点するとき、隣接する打点の時間差は？","0.02秒","0.05秒","0.1秒","0.5秒","1÷50＝0.02秒。"],
+["運動","斜面を下る台車の速さは一般にどうなる？","次第に大きくなる","常に一定","必ず小さくなる","すぐゼロになる","斜面方向に力がはたらく。"],
+["運動","自由落下中の物体の速さはどうなる？","次第に大きくなる","常に一定","次第に小さくなる","ゼロになる","重力によって下向きに加速する（空気抵抗を無視）。"],
+["運動","運動の向きと逆向きの力がはたらくと速さは？","小さくなることがある","必ず増える","必ず一定","瞬時にゼロ","合力が逆向きなら減速する。"],
+["力","同じ向きに3Nと5Nの力がはたらく。合力は？","8N","2N","15N","1.7N","同じ向きの力は加算。"],
+["力","反対向きに8Nと3Nの力がはたらく。合力の大きさは？","5N","11N","24N","0N","差の5Nで、向きは8N側。"],
+["力","一直線上で逆向きの同じ大きさの力がつり合うとき合力は？","0N","2倍","半分","不明","力がつり合うと合力は0。"],
+["力","力の合成とは？","複数の力を同じはたらきの1つの力に置き換えること","力を必ず半分にすること","質量を測ること","エネルギーを熱にすること","置き換えた力を合力という。"],
+["力","力の分解とは？","1つの力を同じはたらきの複数の力に分けること","力をなくすこと","力を合計すること","距離を分けること","分けた力を分力という。"],
+["力","角度のある2力の合力を作図するとき使う図形は？","平行四辺形","円","正五角形","台形のみ","2力を辺とする平行四辺形の対角線。"],
+["力","2力の合力が最大になるのは？","同じ向き","逆向き","直角","向きに無関係","同方向なら大きさの和。"],
+["力","同じ大きさの2力が正反対の向きのとき合力は？","0","片方と同じ","2倍","4倍","互いに打ち消す。"],
+["力","机の上の静止した本にはたらく重力と垂直抗力は？","つり合っている","作用反作用の一組","どちらも下向き","必ず重力が大きい","同じ物体にはたらく逆向きの2力。"],
+["力","斜面上の物体にはたらく重力を分解すると？","斜面に平行な成分と垂直な成分","左右の水平成分だけ","上向きの成分だけ","成分は存在しない","斜面に沿う力が運動に関わる。"],
+["力","斜面の傾きが大きくなると重力の斜面方向の分力は？","大きくなる","小さくなる","常にゼロ","変化しない","重力の斜面方向成分が増える。"],
+["法則","慣性とは？","運動状態を保とうとする性質","力を生み出す性質","質量が消える性質","熱を出す性質","静止または等速直線運動を保とうとする。"],
+["法則","急ブレーキで乗客が前に傾く主な理由は？","慣性","浮力","電磁誘導","光の屈折","体は進んでいた状態を保とうとする。"],
+["法則","止まっているバスが急発進すると体が後ろに傾く理由は？","慣性","重力がなくなるから","浮力","摩擦がゼロだから","体は静止状態を保とうとする。"],
+["法則","物体にはたらく合力が0なら運動は？","静止または等速直線運動を続ける","必ず止まる","必ず加速する","円運動する","慣性の法則。"],
+["法則","作用・反作用の2力はどこにはたらく？","別々の物体","同じ物体","どちらも空気","必ず地面","作用・反作用は異なる物体に作用する。"],
+["法則","作用・反作用の2力の大きさは？","等しい","常に異なる","質量に比例して異なる","片方はゼロ","大きさは等しく向きは反対。"],
+["法則","壁を手で押すと手も押し返される。これは？","作用・反作用","浮力","仕事の原理","慣性だけ","手と壁が互いに力を及ぼす。"],
+["法則","歩くとき足が地面を後ろに押すと地面は足を？","前に押す","後ろに押す","上にだけ押す","押さない","作用・反作用で前進できる。"],
+["法則","作用・反作用の力が打ち消し合わない理由は？","別の物体にはたらくため","向きが同じため","大きさが異なるため","時間が異なるため","つり合いは同じ物体への力を比較する。"],
+["水圧・浮力","水圧は水深が深いほどどうなる？","大きくなる","小さくなる","変わらない","ゼロになる","深いほど上の水の重さによる圧力が大きい。"],
+["水圧・浮力","水中のある点の水圧はどの向きにはたらく？","あらゆる向き","下向きだけ","上向きだけ","右向きだけ","水圧は各面に垂直にはたらく。"],
+["水圧・浮力","同じ深さの水圧は方向によって？","同じ大きさ","上向きが常に最大","横向きはゼロ","下向きはゼロ","静止した水中の同一点で水圧は等しい。"],
+["水圧・浮力","水圧を生む主な要因は？","水の重さ","水の色","容器の材質","水の透明度","水深に応じた水柱の重さ。"],
+["水圧・浮力","水中の物体にはたらく上向きの力は？","浮力","摩擦力","張力","弾性力","周囲の水圧の差で生じる。"],
+["水圧・浮力","水中の直方体の上面と下面で水圧が大きいのは？","下面","上面","同じ","どちらもゼロ","下面のほうが深い。"],
+["水圧・浮力","浮力の大きさは何の重さに等しい？","押しのけた液体の重さ","物体自身の重さ","容器の重さ","空気の重さ","アルキメデスの原理。"],
+["水圧・浮力","物体が完全に水中にあり体積が変わらないとき、深く沈めると浮力は？","ほぼ変わらない","必ず増える","必ず減る","ゼロになる","押しのける水の体積が一定なら浮力は一定。"],
+["水圧・浮力","水中でばねばかりの示す値が小さくなる理由は？","浮力が上向きにはたらくから","重力が消えるから","質量が減るから","ばねが軽くなるから","見かけの重さ＝重力－浮力。"],
+["水圧・浮力","空気中で10N、水中で7Nの物体にはたらく浮力は？","3N","7N","10N","17N","10－7＝3N。"],
+["水圧・浮力","水面に浮いて静止する物体では浮力と重力は？","大きさが等しい","浮力が常に大きい","重力が常に大きい","両方ゼロ","鉛直方向の力がつり合う。"],
+["エネルギー","物体が運動していることで持つエネルギーは？","運動エネルギー","位置エネルギー","化学エネルギー","電気エネルギー","動いている物体が持つ。"],
+["エネルギー","高い位置にある物体が持つエネルギーは？","位置エネルギー","運動エネルギー","音エネルギー","核エネルギー","重力による位置エネルギー。"],
+["エネルギー","質量が同じ物体で高さが高いほど位置エネルギーは？","大きい","小さい","同じ","ゼロ","位置エネルギーは高さに比例。"],
+["エネルギー","高さが同じで質量が2倍なら位置エネルギーは？","2倍","半分","4倍","変わらない","位置エネルギーは質量に比例。"],
+["エネルギー","同じ物体の速さが大きいほど運動エネルギーは？","大きい","小さい","変わらない","必ずゼロ","運動エネルギーは速さの2乗に比例。"],
+["エネルギー","速さが2倍になると運動エネルギーは？","4倍","2倍","半分","8倍","運動エネルギーは速さの2乗に比例。"],
+["エネルギー","質量が2倍で速さが同じなら運動エネルギーは？","2倍","4倍","半分","同じ","運動エネルギーは質量に比例。"],
+["エネルギー","位置エネルギーと運動エネルギーの和は？","力学的エネルギー","電気エネルギー","熱量","仕事率","力学的エネルギーの定義。"],
+["エネルギー","摩擦や空気抵抗を無視した落下中、力学的エネルギーは？","一定","増え続ける","減り続ける","必ずゼロ","力学的エネルギー保存の法則。"],
+["エネルギー","物体が落下すると位置エネルギーは？","減少する","増加する","変わらない","負になる","高さが低くなるため。"],
+["エネルギー","物体が落下すると運動エネルギーは？","増加する","減少する","変わらない","ゼロになる","位置エネルギーが運動エネルギーに変わる。"],
+["エネルギー","振り子が最も低い位置で最大になるのは？","運動エネルギー","位置エネルギー","高さ","質量","速さが最大になる。"],
+["エネルギー","振り子が端で一瞬止まるとき最大になるのは？","位置エネルギー","運動エネルギー","速さ","仕事率","最も高い位置にある。"],
+["エネルギー","摩擦があると力学的エネルギーの一部は主に何に変わる？","熱エネルギー","位置エネルギーだけ","質量","重力","全エネルギーが消えるわけではない。"],
+["仕事","理科でいう仕事が成立する条件は？","力の向きに物体が移動すること","力を出すだけ","疲れること","物体が静止すること","仕事＝力×力の向きに移動した距離。"],
+["仕事","仕事の単位は？","J（ジュール）","W（ワット）","N（ニュートン）","Pa（パスカル）","1J＝1N×1m。"],
+["仕事","仕事を求める式は？","力×力の向きの移動距離","力÷距離","距離÷力","質量÷時間","単位はN・m＝J。"],
+["仕事","10Nの力で同じ向きに3m動かした仕事は？","30J","13J","3J","300J","10×3＝30J。"],
+["仕事","20Nの力で同じ向きに0.5m動かした仕事は？","10J","40J","20.5J","0J","20×0.5＝10J。"],
+["仕事","重力10Nの物体を2m持ち上げた仕事は？","20J","5J","12J","200J","10×2＝20J。"],
+["仕事","壁を押しても壁が動かないとき、壁にした仕事は？","0J","力と同じ値","無限大","必ず1J","移動距離が0。"],
+["仕事","荷物を水平に持って一定の高さで運ぶとき、持ち上げる力がする仕事は？","0J","重力×水平距離","必ず正","必ず負","力が上向きで移動が水平方向なので、その力による仕事は0。"],
+["仕事","仕事率の単位は？","W（ワット）","J（ジュール）","N（ニュートン）","kg","1W＝1J/s。"],
+["仕事","仕事率を求める式は？","仕事÷時間","仕事×時間","時間÷仕事","力÷質量","単位時間当たりの仕事。"],
+["仕事","60Jの仕事を3秒でしたときの仕事率は？","20W","180W","63W","0.05W","60÷3＝20W。"],
+["仕事","100Jの仕事を5秒でしたときの仕事率は？","20W","500W","105W","5W","100÷5＝20W。"],
+["仕事","同じ仕事を半分の時間ですると仕事率は？","2倍","半分","変わらない","4倍","仕事率＝仕事÷時間。"],
+["仕事","動滑車を使い、摩擦を無視すると引く力は一般に？","小さくなる","必ず大きくなる","変わらない","ゼロになる","引く距離が長くなる代わりに力が小さくなる。"],
+["仕事","道具を使っても摩擦を無視すれば仕事の量が変わらないことを？","仕事の原理","慣性の法則","作用反作用","浮力の原理","小さな力で長い距離を動かす。"],
+["仕事","摩擦を無視した斜面を使うと、直接持ち上げる場合に比べて必要な力は？","小さくなる","必ず大きくなる","変わらない","ゼロになる","力は小さくできるが距離が長くなる。"],
+["仕事","同じ高さまで持ち上げる仕事は、斜面の長さを変えると？","摩擦を無視すれば同じ","長いほど必ず増える","短いほどゼロ","常に2倍","仕事の原理。"],
+["変換・保存","電球では電気エネルギーが主に何に変わる？","光と熱","位置だけ","運動だけ","核だけ","発光と発熱が起きる。"],
+["変換・保存","モーターでは電気エネルギーが主に何に変わる？","運動エネルギー","化学エネルギー","位置だけ","核エネルギー","電気を動力に変換。"],
+["変換・保存","発電機では主に何を電気エネルギーに変える？","運動エネルギー","光だけ","音だけ","化学だけ","回転などの運動を電気に変換。"],
+["変換・保存","太陽電池では主に何を電気に変える？","光エネルギー","音エネルギー","位置エネルギー","弾性エネルギー","光電変換を利用。"],
+["変換・保存","乾電池では主に何を電気に変える？","化学エネルギー","光エネルギー","位置エネルギー","音エネルギー","化学反応を利用。"],
+["変換・保存","エネルギー保存の法則とは？","形を変えても全体のエネルギー量は保存される","利用すると全エネルギーが消える","熱はエネルギーでない","電気だけ保存される","変換の前後で総量は保存される。"],
+["変換・保存","エネルギー変換効率はどう求める？","有効に利用したエネルギー÷投入したエネルギー×100","投入÷有効×100","投入＋有効","時間÷距離","百分率で表す。"],
+["変換・保存","投入100Jのうち有効に使えた60Jの効率は？","60%","40%","160%","6%","60÷100×100＝60%。"],
+["変換・保存","エネルギー変換効率が100%未満になりやすいのは？","熱や音など目的外の形にも変換されるため","エネルギーが消滅するため","質量が必ず消えるため","重力が消えるため","総量は保存されるが全てを目的に利用できない。"],
+["変換・保存","電気ストーブで電気が主に変わるエネルギーは？","熱エネルギー","位置エネルギー","運動エネルギー","核エネルギー","電気抵抗による発熱。"]
+];
+const data=rows.map((r,i)=>({id:i+1,unit:r[0],q:r[1],a:r[2],options:r.slice(2,6),why:r[6]}));
+const key="science-final2026-history-v1";let hist={};try{hist=JSON.parse(localStorage.getItem(key)||"{}")||{}}catch{}let queue=[],at=0,score=0,answered=false;
+const $=id=>document.getElementById(id);const units=["全分野",...new Set(data.map(x=>x.unit))];$("unit").innerHTML=units.map(x=>'<option>'+x+'</option>').join("");
+function save(){try{localStorage.setItem(key,JSON.stringify(hist))}catch(e){alert("履歴を保存できませんでした。履歴のエクスポートをお試しください。")}stats()}
+function stats(){let a=0,c=0,w=0;for(let x of Object.values(hist)){a+=x.attempts||0;c+=x.correct||0;if(x.wrong)w++}$("attempts").textContent=a;$("accuracy").textContent=a?Math.round(c/a*100)+"%":"—";$("mistakes").textContent=w;$("count").textContent="収録 "+data.length+"問｜選択中 "+filter().length+"問";$("byunit").innerHTML=units.slice(1).map(u=>{let d=data.filter(x=>x.unit===u),n=d.filter(x=>hist[x.id]?.attempts).length;return u+"："+n+"/"+d.length+"問に挑戦"}).join("<br>")}
+function filter(){return data.filter(x=>$("unit").value==="全分野"||x.unit===$("unit").value)}
+function shuffle(a){let b=[...a];for(let i=b.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+function start(mode){let d=filter();if(mode==="wrong")d=d.filter(x=>hist[x.id]?.wrong);if(!d.length){alert("対象の問題がありません。");return}queue=mode==="random"?shuffle(d).slice(0,10):shuffle(d);at=0;score=0;$("result").hidden=true;$("quiz").hidden=false;render();$("quiz").scrollIntoView({behavior:"smooth"})}
+function render(){answered=false;let x=queue[at];$("category").textContent=x.unit;$("position").textContent=(at+1)+" / "+queue.length;$("bar").style.width=((at+1)/queue.length*100)+"%";$("question").textContent=x.q;$("feedback").hidden=true;$("next").hidden=true;let opts=shuffle(x.options);$("choices").innerHTML="";opts.forEach(v=>{let b=document.createElement("button");b.className="choice";b.textContent=v;b.onclick=()=>choose(v,b);$("choices").appendChild(b)})}
+function choose(v,button){if(answered)return;answered=true;let x=queue[at],ok=v===x.a;score+=Number(ok);let h=hist[x.id]||{attempts:0,correct:0,wrong:false};h.attempts++;h.correct+=Number(ok);h.wrong=!ok;hist[x.id]=h;save();for(let b of $("choices").children){b.disabled=true;if(b.textContent===x.a)b.classList.add("correct");else if(b===button)b.classList.add("wrong")}$("feedback").hidden=false;$("feedback").innerHTML="<strong>"+(ok?"正解！":"不正解｜正解："+x.a)+"</strong><div>"+x.why+"</div>";$("next").hidden=false;$("next").textContent=at===queue.length-1?"結果を見る":"次の問題へ →"}
+function finish(){ $("quiz").hidden=true;$("result").hidden=false;$("summary").textContent=queue.length+"問中 "+score+"問正解（"+Math.round(score/queue.length*100)+"%）";$("result").scrollIntoView({behavior:"smooth"})}
+$("next").onclick=()=>{at++;if(at>=queue.length)finish();else render()};$("start").onclick=()=>start("all");$("random").onclick=()=>start("random");$("wrong").onclick=()=>start("wrong");$("stop").onclick=()=>{$("quiz").hidden=true};$("again").onclick=()=>start("random");$("unit").onchange=stats;
+$("export").onclick=()=>{let blob=new Blob([JSON.stringify({version:1,history:hist,exported:new Date().toISOString()},null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="science-history.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
+$("import").onclick=()=>$("file").click();$("file").onchange=async e=>{try{let d=JSON.parse(await e.target.files[0].text());if(!d.history||typeof d.history!=="object"||Array.isArray(d.history))throw Error();if(!confirm("現在の履歴を読み込んだ履歴で置き換えますか？"))return;hist=d.history;save();alert("履歴を読み込みました")}catch{alert("読み込めないファイルです")}finally{e.target.value=""}};
+$("reset").onclick=()=>{if(confirm("この端末の学習履歴をすべて削除しますか？")){hist={};save()}};stats();
+</script></body></html>
